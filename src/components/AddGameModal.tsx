@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import './AddGameModal.css'
 
 interface AddGameModalProps {
@@ -6,6 +7,14 @@ interface AddGameModalProps {
 }
 
 export function AddGameModal({ onClose, onSelectExecutable }: AddGameModalProps) {
+  // ESC key to close (Jakob's Law)
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+    }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [onClose])
   return (
     <div className="modal-backdrop" onClick={onClose}>
       <div className="modal" onClick={e => e.stopPropagation()}>

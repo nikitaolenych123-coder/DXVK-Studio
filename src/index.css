@@ -287,6 +287,12 @@ body {
   background: #dc2626;
 }
 
+.btn-sm {
+  min-height: 36px;
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--font-size-xs);
+}
+
 /* Cards - Law of Common Region */
 .card {
   background: var(--color-bg-secondary);

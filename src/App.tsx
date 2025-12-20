@@ -76,7 +76,7 @@ function App() {
     }
   }
 
-  // Scan Steam library
+  // Scan Steam library - MERGE with existing manual games
   const handleScanLibrary = useCallback(async () => {
     setIsLoading(true)
     setError(null)
@@ -88,8 +88,12 @@ function App() {
         architecture: g.architecture === 'x86' ? 'x86' :
           g.architecture === 'x64' ? 'x64' : 'unknown'
       }))
-      setGames(mappedGames)
-      if (mappedGames.length === 0) {
+
+      // Preserve manually added games
+      const manualGames = games.filter(g => g.storefront === 'manual')
+      setGames([...mappedGames, ...manualGames])
+
+      if (mappedGames.length === 0 && manualGames.length === 0) {
         setError('No Steam games found. Make sure Steam is installed.')
       }
     } catch (err) {
@@ -98,7 +102,7 @@ function App() {
     } finally {
       setIsLoading(false)
     }
-  }, [])
+  }, [games])
 
   // Install DXVK to selected game
   const handleInstallDxvk = async (versionPath: string) => {
@@ -188,6 +192,23 @@ function App() {
     }
   }
 
+  // Delete a game from library
+  const handleDeleteGame = (gameId: string) => {
+    setGames(prev => prev.filter(g => g.id !== gameId))
+    if (selectedGame?.id === gameId) {
+      setSelectedGame(null)
+    }
+    // Clear localStorage if no games left
+    if (games.length <= 1) {
+      localStorage.removeItem('dxvk-studio-games')
+    }
+  }
+
+  // Close game details panel
+  const handleCloseDetails = () => {
+    setSelectedGame(null)
+  }
+
   return (
     <div className="app">
       <Header
@@ -240,6 +261,8 @@ function App() {
               installedVersions={installedVersions}
               onInstall={handleInstallDxvk}
               onRemove={handleRemoveDxvk}
+              onClose={handleCloseDetails}
+              onDelete={() => handleDeleteGame(selectedGame.id)}
               isLoading={isLoading}
             />
           </aside>
