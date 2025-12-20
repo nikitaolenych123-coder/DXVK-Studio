@@ -65,7 +65,17 @@ function GameCard({ game, isSelected, onClick }: GameCardProps) {
       aria-pressed={isSelected}
     >
       <div className="game-card-icon">
-        {getStorefrontIcon(game.storefront)}
+        {game.iconUrl ? (
+          <img
+            src={game.iconUrl}
+            alt=""
+            width="32"
+            height="32"
+            style={{ objectFit: 'contain' }}
+          />
+        ) : (
+          getStorefrontIcon(game.storefront)
+        )}
       </div>
       <div className="game-card-content">
         <h3 className="game-card-title">{game.name}</h3>

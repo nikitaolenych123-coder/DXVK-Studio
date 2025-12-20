@@ -13,6 +13,7 @@ export interface Game {
   name: string
   path: string
   exePath: string | null
+  iconUrl: string | null
   architecture: 'x86' | 'x64' | 'unknown'
   dxVersion: 8 | 9 | 10 | 11 | null
   dxvkInstalled: boolean
@@ -171,11 +172,15 @@ function App() {
       const gamePath = exePath.substring(0, exePath.lastIndexOf('\\'))
       const gameName = gamePath.split('\\').pop() || 'Unknown Game'
 
+      // Extract exe icon
+      const iconUrl = await window.electronAPI.getFileIcon(exePath)
+
       const newGame: Game = {
         id: `manual-${Date.now()}`,
         name: gameName,
         path: gamePath,
         exePath,
+        iconUrl,
         architecture: analysis.architecture || 'unknown',
         dxVersion: analysis.dxVersion || null,
         dxvkInstalled: false,

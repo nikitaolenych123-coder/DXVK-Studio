@@ -4,8 +4,9 @@
  * Registers IPC handlers for all core engine functionality.
  */
 
-import { app, BrowserWindow, ipcMain, dialog } from 'electron'
+import { app, BrowserWindow, ipcMain, dialog, nativeImage } from 'electron'
 import { join } from 'path'
+import { existsSync } from 'fs'
 
 // Import services
 import { analyzePE } from './services/pe-parser'
@@ -77,6 +78,7 @@ function registerIpcHandlers() {
           return {
             ...game,
             exePath: null,
+            iconUrl: null,
             architecture: 'unknown',
             dxVersion: null,
             dxvkInstalled: false
@@ -86,11 +88,21 @@ function registerIpcHandlers() {
         const analysis = await analyzePE(exePath)
         const dxvkStatus = await checkDxvkInstalled(game.installDir)
 
+        // Extract exe icon as base64 data URL
+        let iconUrl: string | null = null
+        try {
+          const icon = await app.getFileIcon(exePath, { size: 'large' })
+          iconUrl = icon.toDataURL()
+        } catch (e) {
+          // Icon extraction failed, use null
+        }
+
         return {
           id: game.appId,
           name: game.name,
           path: game.installDir,
           exePath,
+          iconUrl,
           architecture: analysis.architecture || 'unknown',
           dxVersion: analysis.dxVersion || null,
           dxvkInstalled: dxvkStatus.installed,
@@ -160,6 +172,17 @@ function registerIpcHandlers() {
       filters: [{ name: 'Executables', extensions: ['exe'] }]
     })
     return result.canceled ? null : result.filePaths[0]
+  })
+
+  // --- Icon Extraction ---
+  ipcMain.handle('get-file-icon', async (_event, filePath: string) => {
+    try {
+      if (!existsSync(filePath)) return null
+      const icon = await app.getFileIcon(filePath, { size: 'large' })
+      return icon.toDataURL()
+    } catch {
+      return null
+    }
   })
 }
 

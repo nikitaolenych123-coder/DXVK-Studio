@@ -43,6 +43,10 @@ const electronAPI = {
   selectExecutable: () =>
     ipcRenderer.invoke('select-executable'),
 
+  // Icon Extraction
+  getFileIcon: (filePath: string) =>
+    ipcRenderer.invoke('get-file-icon', filePath),
+
   // Events
   onProgress: (callback: (progress: number) => void) => {
     const handler = (_event: any, progress: number) => callback(progress)
