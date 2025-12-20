@@ -38,10 +38,26 @@ function App() {
   const [showAddGame, setShowAddGame] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  // Load installed DXVK versions on mount
+  // Load games from localStorage on mount
   useEffect(() => {
+    const savedGames = localStorage.getItem('dxvk-studio-games')
+    if (savedGames) {
+      try {
+        const parsed = JSON.parse(savedGames)
+        setGames(parsed)
+      } catch (e) {
+        console.error('Failed to parse saved games:', e)
+      }
+    }
     loadInstalledVersions()
   }, [])
+
+  // Save games to localStorage whenever they change
+  useEffect(() => {
+    if (games.length > 0) {
+      localStorage.setItem('dxvk-studio-games', JSON.stringify(games))
+    }
+  }, [games])
 
   // Auto-dismiss errors after 5 seconds
   useEffect(() => {
