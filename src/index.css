@@ -1,0 +1,100 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom scrollbar for the app */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: theme('colors.studio.900');
+}
+
+::-webkit-scrollbar-thumb {
+  background: theme('colors.studio.700');
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: theme('colors.studio.600');
+}
+
+/* Electron window controls spacing */
+.titlebar-drag {
+  -webkit-app-region: drag;
+}
+
+.titlebar-no-drag {
+  -webkit-app-region: no-drag;
+}
+
+/* Glass effect for cards */
+@layer components {
+  .glass-card {
+    @apply bg-studio-850/80 backdrop-blur-md border border-studio-700/50 rounded-xl shadow-inner-glow;
+  }
+
+  .glass-card-hover {
+    @apply glass-card transition-all duration-200 hover:bg-studio-800/90 hover:border-studio-600/50 hover:shadow-glow;
+  }
+
+  .btn-primary {
+    @apply px-4 py-2 bg-accent-vulkan text-white font-medium rounded-lg
+           transition-all duration-200 hover:bg-accent-glow hover:shadow-glow
+           active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply px-4 py-2 bg-studio-800 text-studio-300 font-medium rounded-lg border border-studio-700
+           transition-all duration-200 hover:bg-studio-700 hover:text-studio-200
+           active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .input-field {
+    @apply w-full px-3 py-2 bg-studio-900 border border-studio-700 rounded-lg
+           text-studio-200 placeholder:text-studio-600
+           focus:outline-none focus:border-accent-vulkan focus:ring-1 focus:ring-accent-vulkan/50
+           transition-colors duration-150;
+  }
+
+  .badge {
+    @apply inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full;
+  }
+
+  .badge-32bit {
+    @apply badge bg-amber-500/20 text-amber-400 border border-amber-500/30;
+  }
+
+  .badge-64bit {
+    @apply badge bg-blue-500/20 text-blue-400 border border-blue-500/30;
+  }
+
+  .status-dot {
+    @apply w-2.5 h-2.5 rounded-full;
+  }
+
+  .status-active {
+    @apply status-dot bg-accent-success shadow-[0_0_8px_theme('colors.accent.success')];
+  }
+
+  .status-inactive {
+    @apply status-dot bg-studio-600;
+  }
+
+  .status-warning {
+    @apply status-dot bg-accent-warning shadow-[0_0_8px_theme('colors.accent.warning')];
+  }
+}
+
+/* Layout utilities */
+@layer utilities {
+  .sidebar {
+    @apply w-64 bg-studio-900 border-r border-studio-800 flex flex-col;
+  }
+
+  .main-content {
+    @apply flex-1 bg-studio-950 overflow-auto;
+  }
+}
