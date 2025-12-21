@@ -277,9 +277,11 @@ function App() {
               </>
             )}
           </div>
+        ) : activeView === 'settings' ? (
+          <SettingsView />
         ) : (
           <div className="p-6 flex flex-col items-center justify-center py-20 text-center">
-            <Settings className="w-16 h-16 text-studio-700 mb-4" />
+            <FileText className="w-16 h-16 text-studio-700 mb-4" />
             <h3 className="text-lg font-medium text-studio-400 mb-2">Coming Soon</h3>
             <p className="text-studio-500">This view is under development.</p>
           </div>
@@ -444,6 +446,127 @@ function EngineManagerView() {
           })}
         </div>
       )}
+    </div>
+  )
+}
+
+// Settings View Component
+function SettingsView() {
+  const [defaultFork, setDefaultFork] = useState<DxvkFork>('official')
+  const [cacheSize, setCacheSize] = useState<string>('Calculating...')
+
+  useEffect(() => {
+    if (!isElectron) return
+
+    const fetchCacheSize = async () => {
+      try {
+        const engines = await window.electronAPI.getAllCachedEngines()
+        const totalBytes = engines.reduce((acc: number, e: { sizeBytes: number }) => acc + e.sizeBytes, 0)
+
+        if (totalBytes === 0) {
+          setCacheSize('0 B')
+        } else {
+          const k = 1024
+          const sizes = ['B', 'KB', 'MB', 'GB']
+          const i = Math.floor(Math.log(totalBytes) / Math.log(k))
+          setCacheSize(`${parseFloat((totalBytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`)
+        }
+      } catch {
+        setCacheSize('Unknown')
+      }
+    }
+
+    fetchCacheSize()
+  }, [])
+
+  const forkLabels: Record<DxvkFork, string> = {
+    official: 'Official (doitsujin)',
+    gplasync: 'GPL Async (Ph42oN)',
+    nvapi: 'NVAPI (jp7677)'
+  }
+
+  return (
+    <div className="animate-fade-in p-6">
+      <div className="mb-6">
+        <h2 className="text-2xl font-bold text-studio-100">Settings</h2>
+        <p className="text-studio-400 mt-1">Configure DXVK Studio preferences</p>
+      </div>
+
+      <div className="space-y-6 max-w-2xl">
+        {/* Preferences Section */}
+        <div className="glass-card p-6">
+          <h3 className="text-lg font-semibold text-studio-200 mb-4 flex items-center gap-2">
+            <Settings className="w-5 h-5 text-accent-vulkan" />
+            Preferences
+          </h3>
+
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm text-studio-400 mb-2">Default DXVK Fork</label>
+              <select
+                value={defaultFork}
+                onChange={(e) => setDefaultFork(e.target.value as DxvkFork)}
+                className="input-field max-w-xs"
+              >
+                {Object.entries(forkLabels).map(([key, label]) => (
+                  <option key={key} value={key}>{label}</option>
+                ))}
+              </select>
+              <p className="text-xs text-studio-500 mt-1">
+                Fork to use by default when installing DXVK
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Storage Section */}
+        <div className="glass-card p-6">
+          <h3 className="text-lg font-semibold text-studio-200 mb-4 flex items-center gap-2">
+            <Download className="w-5 h-5 text-accent-vulkan" />
+            Storage
+          </h3>
+
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-studio-300">Cached Engines</p>
+                <p className="text-xs text-studio-500">Downloaded DXVK versions</p>
+              </div>
+              <span className="text-studio-200 font-medium">{cacheSize}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* About Section */}
+        <div className="glass-card p-6">
+          <h3 className="text-lg font-semibold text-studio-200 mb-4 flex items-center gap-2">
+            <FileText className="w-5 h-5 text-accent-vulkan" />
+            About
+          </h3>
+
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <p className="text-studio-300">Version</p>
+              <span className="text-studio-200 font-mono">1.0.0</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <p className="text-studio-300">Platform</p>
+              <span className="text-studio-200">Windows</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <p className="text-studio-300">Framework</p>
+              <span className="text-studio-200">Electron 33</span>
+            </div>
+          </div>
+
+          <div className="mt-4 pt-4 border-t border-studio-700">
+            <p className="text-sm text-studio-500">
+              DXVK Studio helps you manage DXVK installations across your game library.
+              Built with Electron, React, and TypeScript.
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
