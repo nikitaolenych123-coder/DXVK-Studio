@@ -14,8 +14,10 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
   // ============================================
   // Game Discovery
   // ============================================
-  scanSteamLibrary: () => electron.ipcRenderer.invoke("games:scanSteam"),
+  scanAllGames: () => electron.ipcRenderer.invoke("games:scanAll"),
   checkSteamInstalled: () => electron.ipcRenderer.invoke("games:checkSteam"),
+  // Deprecated - alias to scanAllGames
+  scanSteamLibrary: () => electron.ipcRenderer.invoke("games:scanAll"),
   // ============================================
   // PE Analysis
   // ============================================

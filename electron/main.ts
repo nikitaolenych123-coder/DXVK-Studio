@@ -4,6 +4,8 @@ import { existsSync } from 'fs'
 
 // Services
 import { getAllSteamGames, findSteamPath } from './services/steam-scanner'
+import { findGogGames } from './services/gog-scanner'
+import { findEpicGames } from './services/epic-scanner'
 import { analyzeExecutable, findGameExecutables } from './services/pe-analyzer'
 import {
   getAvailableEngines,
@@ -65,6 +67,14 @@ function createWindow() {
   } else {
     mainWindow.loadFile(join(process.env.DIST!, 'index.html'))
   }
+
+  // Open external links in default browser
+  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+    if (url.startsWith('https:') || url.startsWith('http:')) {
+      shell.openExternal(url)
+    }
+    return { action: 'deny' }
+  })
 }
 
 // ============================================
@@ -125,60 +135,103 @@ ipcMain.handle('shell:openPath', async (_, path: string) => {
 // IPC Handlers - Game Discovery
 // ============================================
 
-ipcMain.handle('games:scanSteam', async () => {
+ipcMain.handle('games:scanAll', async () => {
   try {
     const steamApps = getAllSteamGames()
+    const gogGames = await findGogGames()
+    const epicGames = findEpicGames()
 
-    // Convert to Game objects with architecture detection
-    const games: Partial<Game>[] = await Promise.all(
+    // Helper to analyze a game
+    const analyze = (gamePath: string, mainExe: string) => {
+      const exePath = mainExe ? join(gamePath, mainExe) : ''
+
+      // Detect architecture
+      let architecture: '32' | '64' | 'unknown' = 'unknown'
+      if (exePath && existsSync(exePath)) {
+        const analysis = analyzeExecutable(exePath)
+        architecture = analysis.architecture
+      }
+
+      // Check DXVK status
+      let dxvkStatus: 'active' | 'inactive' | 'outdated' | 'corrupt' = 'inactive'
+      let dxvkVersion: string | undefined
+      let dxvkFork: DxvkFork | undefined
+
+      if (isDxvkInstalled(gamePath)) {
+        const installed = getInstalledVersion(gamePath)
+        const integrity = checkIntegrity(gamePath)
+
+        if (installed) {
+          dxvkVersion = installed.version
+          dxvkFork = installed.fork
+        }
+        dxvkStatus = integrity === 'ok' ? 'active' : integrity as any
+      }
+
+      return { architecture, dxvkStatus, dxvkVersion, dxvkFork }
+    }
+
+    // Process Steam Apps
+    const processedSteam = await Promise.all(
       steamApps.map(async (app) => {
-        // Find main executable
         const executables = findGameExecutables(app.fullPath)
         const mainExe = executables[0] || ''
-        const exePath = mainExe ? join(app.fullPath, mainExe) : ''
-
-        // Detect architecture
-        let architecture: '32' | '64' | 'unknown' = 'unknown'
-        if (exePath && existsSync(exePath)) {
-          const analysis = analyzeExecutable(exePath)
-          architecture = analysis.architecture
-        }
-
-        // Check DXVK status
-        let dxvkStatus: 'active' | 'inactive' | 'outdated' | 'corrupt' = 'inactive'
-        let dxvkVersion: string | undefined
-        let dxvkFork: DxvkFork | undefined
-
-        if (isDxvkInstalled(app.fullPath)) {
-          const installed = getInstalledVersion(app.fullPath)
-          const integrity = checkIntegrity(app.fullPath)
-
-          if (installed) {
-            dxvkVersion = installed.version
-            dxvkFork = installed.fork
-          }
-
-          dxvkStatus = integrity === 'ok' ? 'active' : integrity as any
-        }
+        const analysis = analyze(app.fullPath, mainExe)
 
         return {
           id: `steam-${app.appId}`,
           name: app.name,
           path: app.fullPath,
           executable: mainExe,
-          architecture,
+          architecture: analysis.architecture,
           platform: 'steam' as const,
           steamAppId: app.appId,
-          dxvkStatus,
-          dxvkVersion,
-          dxvkFork
-        }
+          dxvkStatus: analysis.dxvkStatus,
+          dxvkVersion: analysis.dxvkVersion,
+          dxvkFork: analysis.dxvkFork,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        } as Game
       })
     )
 
-    return games
+    // Process GOG Games
+    const processedGog = await Promise.all(
+      gogGames.map(async (game) => {
+        const mainExe = game.executable ? basename(game.executable) : ''
+        const analysis = analyze(game.path, mainExe)
+
+        return {
+          ...game, // Already has id, name, path
+          executable: mainExe,
+          architecture: analysis.architecture,
+          dxvkStatus: analysis.dxvkStatus,
+          dxvkVersion: analysis.dxvkVersion,
+          dxvkFork: analysis.dxvkFork
+        } as Game
+      })
+    )
+
+    // Process Epic Games
+    const processedEpic = await Promise.all(
+      epicGames.map(async (game) => {
+        const mainExe = game.executable ? basename(game.executable) : ''
+        const analysis = analyze(game.path, mainExe)
+
+        return {
+          ...game,
+          executable: mainExe,
+          architecture: analysis.architecture,
+          dxvkStatus: analysis.dxvkStatus,
+          dxvkVersion: analysis.dxvkVersion,
+          dxvkFork: analysis.dxvkFork
+        } as Game
+      })
+    )
+
+    return [...processedSteam, ...processedGog, ...processedEpic]
   } catch (error) {
-    console.error('Failed to scan Steam library:', error)
+    console.error('Failed to scan games:', error)
     return []
   }
 })

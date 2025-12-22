@@ -10,7 +10,9 @@ import {
   FolderOpen,
   AlertTriangle,
   Check,
-  X
+  X,
+  Heart,
+  ExternalLink
 } from 'lucide-react'
 import type { Game, DxvkFork } from './shared/types'
 
@@ -61,7 +63,7 @@ function App() {
 
     setIsScanning(true)
     try {
-      const scannedGames = await window.electronAPI.scanSteamLibrary()
+      const scannedGames = await window.electronAPI.scanAllGames()
       const newSteamGames = scannedGames.map((g: Partial<Game>, i: number) => ({
         id: g.id || `steam-${i}`,
         name: g.name || 'Unknown Game',
@@ -566,6 +568,44 @@ function SettingsView() {
           </div>
         </div>
 
+        {/* Support Section */}
+        <div className="glass-card p-6 bg-gradient-to-br from-accent-vulkan/10 to-transparent border-accent-vulkan/20">
+          <h3 className="text-lg font-semibold text-studio-100 mb-4 flex items-center gap-2">
+            <Heart className="w-5 h-5 text-accent-danger fill-accent-danger" />
+            Support Project
+          </h3>
+
+          <p className="text-studio-300 transform mb-6">
+            DXVK Studio is open source and free. If you enjoy using it, consider supporting development!
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <button
+              onClick={() => window.open('https://github.com/sponsors/Zendevve', '_blank')}
+              className="btn-primary flex items-center justify-center gap-2 py-3"
+            >
+              <Heart className="w-4 h-4" />
+              GitHub Sponsors
+            </button>
+            <button
+              onClick={() => window.open('https://ko-fi.com', '_blank')}
+              className="btn-secondary flex items-center justify-center gap-2 py-3"
+            >
+              <ExternalLink className="w-4 h-4" />
+              Donate via Ko-fi
+            </button>
+          </div>
+
+          <div className="mt-4 text-center">
+            <button
+              onClick={() => window.open('https://github.com/Zendevve/dxvk-studio', '_blank')}
+              className="text-xs text-studio-500 hover:text-accent-vulkan transition-colors"
+            >
+              Star on GitHub
+            </button>
+          </div>
+        </div>
+
         {/* About Section */}
         <div className="glass-card p-6">
           <h3 className="text-lg font-semibold text-studio-200 mb-4 flex items-center gap-2">
@@ -816,7 +856,7 @@ function GameCard({ game, onClick }: { game: Game; onClick: () => void }) {
           {game.name}
         </h3>
         <p className="text-xs text-studio-500 truncate mt-0.5">
-          {game.platform === 'steam' ? 'Steam' : 'Manual'} • {game.executable || 'No executable'}
+          {game.platform === 'steam' ? 'Steam' : game.platform === 'gog' ? 'GOG Galaxy' : game.platform === 'epic' ? 'Epic Games' : 'Manual'} • {game.executable || 'No executable'}
         </p>
       </div>
     </div>

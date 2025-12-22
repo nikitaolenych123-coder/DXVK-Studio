@@ -327,6 +327,12 @@ function getAllCachedEngines() {
   return engines;
 }
 async function fetchReleases(fork, limit = 10) {
+  if (fork === "gplasync") {
+    return fetchGitLabReleases(limit);
+  }
+  return fetchGitHubReleases(fork, limit);
+}
+async function fetchGitHubReleases(fork, limit) {
   const repo = GITHUB_REPOS[fork];
   const url = `https://api.github.com/repos/${repo}/releases?per_page=${limit}`;
   try {
@@ -349,16 +355,54 @@ async function fetchReleases(fork, limit = 10) {
     return getFallbackReleases(fork);
   }
 }
+async function fetchGitLabReleases(limit) {
+  const url = `https://gitlab.com/api/v4/projects/Ph42oN%2Fdxvk-gplasync/releases?per_page=${limit}`;
+  try {
+    const response = await fetch(url, {
+      headers: {
+        "User-Agent": "DXVK-Studio"
+      }
+    });
+    if (!response.ok) {
+      throw new Error(`GitLab API returned ${response.status}`);
+    }
+    const gitlabReleases = await response.json();
+    return gitlabReleases.map((release) => {
+      const tarGzLink = release.assets.links.find((l) => l.name.endsWith(".tar.gz"));
+      return {
+        tag_name: release.tag_name,
+        name: release.name,
+        published_at: release.released_at,
+        body: release.description,
+        assets: tarGzLink ? [{
+          name: tarGzLink.name,
+          browser_download_url: tarGzLink.direct_asset_url
+        }] : []
+      };
+    });
+  } catch (error) {
+    console.error("Failed to fetch releases from GitLab:", error);
+    return getFallbackReleases("gplasync");
+  }
+}
 function getFallbackReleases(fork) {
+  if (fork === "gplasync") {
+    const gplVersions = ["2.7.1-1", "2.7-1", "2.6.2-1", "2.6.1-1", "2.6-1", "2.5.3-1"];
+    return gplVersions.map((version) => ({
+      tag_name: `v${version}`,
+      name: `DXVK GPL Async ${version}`,
+      published_at: (/* @__PURE__ */ new Date()).toISOString(),
+      body: "Fallback version (API unavailable)",
+      assets: [{
+        name: `dxvk-gplasync-v${version}.tar.gz`,
+        browser_download_url: `https://gitlab.com/Ph42oN/dxvk-gplasync/-/raw/main/releases/dxvk-gplasync-v${version}.tar.gz?ref_type=heads`
+      }]
+    }));
+  }
   const fallbackData = {
     official: {
       versions: ["2.7.1", "2.7", "2.6.1", "2.5.3", "2.5.1", "2.5", "2.4.1"],
       assetPrefix: "dxvk"
-    },
-    gplasync: {
-      // GPL Async fork - check if these versions exist
-      versions: ["2.4", "2.3.1", "2.3", "2.2", "2.1"],
-      assetPrefix: "dxvk-async"
     },
     nvapi: {
       versions: ["0.7.1", "0.7.0", "0.6.9", "0.6.8", "0.6.7"],
@@ -718,6 +762,12 @@ function createWindow() {
   } else {
     mainWindow.loadFile(path.join(process.env.DIST, "index.html"));
   }
+  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+    if (url.startsWith("https:") || url.startsWith("http:")) {
+      electron.shell.openExternal(url);
+    }
+    return { action: "deny" };
+  });
 }
 electron.app.whenReady().then(() => {
   createWindow();
