@@ -18,13 +18,26 @@ import type { Game, DxvkFork } from './shared/types'
 const isElectron = typeof window !== 'undefined' && window.electronAPI !== undefined
 
 function App() {
-  const [games, setGames] = useState<Game[]>([])
+  // Load games from localStorage on init
+  const [games, setGames] = useState<Game[]>(() => {
+    try {
+      const saved = localStorage.getItem('dxvk-studio-games')
+      return saved ? JSON.parse(saved) : []
+    } catch {
+      return []
+    }
+  })
   const [searchQuery, setSearchQuery] = useState('')
   const [isScanning, setIsScanning] = useState(false)
   const [activeView, setActiveView] = useState<'games' | 'engines' | 'settings' | 'logs'>('games')
   const [selectedGame, setSelectedGame] = useState<Game | null>(null)
   const [steamInstalled, setSteamInstalled] = useState<boolean | null>(null)
   const [notification, setNotification] = useState<{ type: 'success' | 'error' | 'info'; message: string } | null>(null)
+
+  // Save games to localStorage when they change
+  useEffect(() => {
+    localStorage.setItem('dxvk-studio-games', JSON.stringify(games))
+  }, [games])
 
   // Check if Steam is installed on mount
   useEffect(() => {
@@ -492,7 +505,7 @@ function SettingsView() {
         <p className="text-studio-400 mt-1">Configure DXVK Studio preferences</p>
       </div>
 
-      <div className="space-y-6 max-w-2xl">
+      <div className="space-y-6 max-w-2xl mx-auto">
         {/* Preferences Section */}
         <div className="glass-card p-6">
           <h3 className="text-lg font-semibold text-studio-200 mb-4 flex items-center gap-2">
