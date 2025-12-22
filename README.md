@@ -41,7 +41,14 @@ DXVK is a translation layer that converts DirectX calls to Vulkan. It can **boos
 
 ## Quick Start
 
-**Download:** Grab the latest installer from [Releases](https://github.com/Zendevve/dxvk-studio/releases)
+> **Open Core Model**: The source code is 100% free and open. Pre-built binaries are available for convenience—free on GitHub, or support development via Gumroad.
+
+### Download Options
+
+| Option | Description |
+|--------|-------------|
+| **🆓 Free** | [Build from source](#development) or grab binaries from [Releases](https://github.com/Zendevve/dxvk-studio/releases) |
+| **💎 Support** | [Get on Gumroad](https://gumroad.com) — same app, supports the developer |
 
 **Requirements:** Windows 10/11, Vulkan-capable GPU
 
