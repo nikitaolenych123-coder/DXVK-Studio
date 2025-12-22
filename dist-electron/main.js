@@ -351,7 +351,7 @@ async function fetchReleases(fork, limit = 10) {
 function getFallbackReleases(fork) {
   const fallbackData = {
     official: {
-      versions: ["2.5.3", "2.5.1", "2.5", "2.4.1", "2.4", "2.3.1"],
+      versions: ["2.7.1", "2.7", "2.6.1", "2.5.3", "2.5.1", "2.5", "2.4.1"],
       assetPrefix: "dxvk"
     },
     gplasync: {

@@ -171,7 +171,7 @@ function getFallbackReleases(fork: DxvkFork): DxvkRelease[] {
   // NVAPI: https://github.com/jp7677/dxvk-nvapi/releases
   const fallbackData: Record<DxvkFork, { versions: string[], assetPrefix: string }> = {
     official: {
-      versions: ['2.5.3', '2.5.1', '2.5', '2.4.1', '2.4', '2.3.1'],
+      versions: ['2.7.1', '2.7', '2.6.1', '2.5.3', '2.5.1', '2.5', '2.4.1'],
       assetPrefix: 'dxvk'
     },
     gplasync: {
