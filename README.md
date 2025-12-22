@@ -1,119 +1,141 @@
 <div align="center">
 
-<img src="public/icon.png" alt="DXVK Studio" width="120">
+<img src="public/icon.png" alt="DXVK Studio" width="100">
 
 # DXVK Studio
 
-**One-click DXVK management for your entire game library**
+A Windows desktop app that makes [DXVK](https://github.com/doitsujin/dxvk) easy for everyone.
 
-[![Release](https://img.shields.io/github/v/release/Zendevve/dxvk-studio?style=flat-square&color=blue)](https://github.com/Zendevve/dxvk-studio/releases)
-[![Downloads](https://img.shields.io/github/downloads/Zendevve/dxvk-studio/total?style=flat-square&color=green)](https://github.com/Zendevve/dxvk-studio/releases)
+[![Release](https://img.shields.io/github/v/release/Zendevve/dxvk-studio?style=flat-square&color=0969da)](https://github.com/Zendevve/dxvk-studio/releases)
+[![Downloads](https://img.shields.io/github/downloads/Zendevve/dxvk-studio/total?style=flat-square&color=2da44e)](https://github.com/Zendevve/dxvk-studio/releases)
 [![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](LICENSE)
-[![Platform](https://img.shields.io/badge/platform-Windows-0078D6?style=flat-square&logo=windows&logoColor=white)](https://github.com/Zendevve/dxvk-studio/releases)
+[![Built with Electron](https://img.shields.io/badge/built%20with-Electron-47848f?style=flat-square&logo=electron&logoColor=white)](https://electronjs.org)
 
-[Download](#-installation) • [Features](#-features) • [Usage](#-usage) • [Roadmap](#-roadmap) • [Contributing](#-contributing)
+<br>
 
----
-
-<img src="docs/screenshot.png" alt="DXVK Studio Screenshot" width="800">
+<img src="docs/screenshot.png" alt="DXVK Studio" width="700">
 
 </div>
 
-## 🎯 What is this?
+---
 
-**DXVK Studio** is a desktop application that manages [DXVK](https://github.com/doitsujin/dxvk) installations on Windows. DXVK translates DirectX 9/10/11 calls to Vulkan, which can significantly improve game performance—especially for older titles on modern hardware.
+## What does it do?
 
-Instead of manually downloading archives, extracting DLLs, and editing config files, DXVK Studio handles everything with a few clicks.
+DXVK is a translation layer that converts DirectX calls to Vulkan. It can **boost FPS in older games** and fix compatibility issues on modern systems. The problem? Installing it manually is tedious—downloading archives, picking the right DLLs, editing config files.
 
-<br>
+**DXVK Studio automates all of that.** Point it at your games, pick a version, click install. Done.
 
-## ✨ Features
+---
 
-| Feature | Description |
-|---------|-------------|
-| 🎮 **Smart Discovery** | Auto-detects games from Steam, GOG, and Epic |
-| 🔍 **Architecture Detection** | Reads PE headers to pick 32-bit or 64-bit DLLs |
-| 📦 **Multi-Fork Support** | Official, GPL Async, and NVAPI forks |
-| 🛡️ **Safe Deployment** | Backs up original DLLs before any changes |
-| ⚙️ **Config Editor** | Visual editor for `dxvk.conf` settings |
-| 🚨 **Anti-Cheat Warnings** | Alerts you before modifying risky games |
-| 📋 **Activity Logs** | Searchable, exportable operation history |
+## Features
 
-<br>
+- **Auto-detects your games** from Steam, GOG Galaxy, and Epic Games Store
+- **Handles 32-bit and 64-bit** automatically by reading executable headers
+- **Multiple DXVK forks** — Official, GPL Async (shader stutter fix), and NVAPI
+- **Safe installs** — backs up original DLLs before any changes
+- **Visual config editor** — tweak HUD, VSync, FPS limits without touching files
+- **Anti-cheat warnings** — alerts you before modifying online games
+- **Activity logs** — see everything the app has done
 
-## 📥 Installation
+---
 
-### Download
+## Quick Start
 
-| Type | Link |
-|------|------|
-| **Installer** | [DXVK Studio Setup 1.0.0.exe](https://github.com/Zendevve/dxvk-studio/releases/latest) |
-| **Portable** | [DXVK Studio 1.0.0.exe](https://github.com/Zendevve/dxvk-studio/releases/latest) |
+**Download:** Grab the latest installer from [Releases](https://github.com/Zendevve/dxvk-studio/releases)
 
-**Requirements:** Windows 10/11 (64-bit), Vulkan-capable GPU
+**Requirements:** Windows 10/11, Vulkan-capable GPU
 
-### Build from Source
+**Usage:**
+1. Launch the app — your games appear automatically
+2. Click a game → choose fork and version → click **Install**
+3. To undo, click **Uninstall** — original files are restored
+
+---
+
+## For Developers
+
+### Tech Stack
+
+| Layer | Technology |
+|-------|------------|
+| Framework | Electron 33 |
+| UI | React 18 + TypeScript |
+| Styling | TailwindCSS |
+| Build | Vite + electron-builder |
+| Testing | Vitest |
+
+### Architecture
+
+```
+electron/
+├── main.ts              # App entry, IPC handlers
+├── preload.ts           # Context bridge (security)
+└── services/
+    ├── steam-scanner.ts # VDF parsing, registry queries
+    ├── gog-scanner.ts   # GOG Galaxy registry integration
+    ├── epic-scanner.ts  # Epic manifest parsing
+    ├── pe-analyzer.ts   # PE header reading (32/64-bit detection)
+    ├── engine-manager.ts# GitHub/GitLab API, download, cache
+    ├── deployer.ts      # DLL installation, backup, restore
+    └── anti-cheat.ts    # Signature detection
+
+src/
+├── App.tsx              # Main UI controller
+├── components/          # Reusable React components
+└── shared/types.ts      # Shared TypeScript interfaces
+```
+
+### Development
 
 ```bash
 git clone https://github.com/Zendevve/dxvk-studio.git
 cd dxvk-studio
 npm install
-npm run build
+npm run dev      # Start with hot reload
+npm test         # Run tests
+npm run build    # Production build
 ```
 
-<br>
+### Key Design Decisions
 
-## 🚀 Usage
+- **Windows-first**: Registry queries, PE parsing, native paths — built for Windows from day one
+- **Offline-capable**: Downloaded engines are cached locally
+- **Non-destructive**: Every install creates backups; uninstall always works
+- **No admin required**: Operates entirely in user space
 
-```
-1. Launch DXVK Studio
-2. Select a game from the auto-detected library
-3. Pick a DXVK fork and version
-4. Click "Install"
-```
+---
 
-**Manual game addition:** Click `Add Game` → select any `.exe`
+## Roadmap
 
-**Configuration:** Click the ⚙️ button on any game to edit HUD, VSync, FPS limits, etc.
+| Status | Feature |
+|--------|---------|
+| ✅ | Multi-launcher game detection |
+| ✅ | One-click DXVK install/uninstall |
+| ✅ | Config editor with visual UI |
+| ✅ | Anti-cheat detection |
+| 🔜 | Per-game configuration profiles |
+| 🔜 | HUD position/scale editor |
+| 📋 | Profile import/export |
+| 📋 | Linux support |
 
-**Uninstall:** Click `Uninstall` to restore original DLLs
+---
 
-<br>
+## Contributing
 
-## 🗺️ Roadmap
+Pull requests welcome. For significant changes, open an issue first.
 
-- [x] Multi-platform game scanning
-- [x] One-click install/uninstall
-- [x] Visual config editor
-- [x] Anti-cheat detection
-- [ ] Game-specific profiles
-- [ ] HUD position editor
-- [ ] Profile import/export
-- [ ] Linux support
+See [CHANGELOG.md](CHANGELOG.md) for version history.
 
-<br>
+---
 
-## 🤝 Contributing
+## License
 
-Contributions welcome!
-
-```bash
-npm run dev    # Start development server
-npm test       # Run tests
-```
-
-For major changes, please open an issue first.
-
-<br>
-
-## 📄 License
-
-[MIT](LICENSE) © [Zendevve](https://github.com/Zendevve)
+[MIT](LICENSE) — use it however you want.
 
 ---
 
 <div align="center">
 
-**[⬆ Back to top](#dxvk-studio)**
+Made by [Zendevve](https://github.com/Zendevve)
 
 </div>
