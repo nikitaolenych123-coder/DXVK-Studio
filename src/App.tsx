@@ -882,9 +882,11 @@ function GameDetailView({
           cached: e.cached,
           downloadUrl: e.downloadUrl
         })))
-        // Auto-select first version if none selected
-        if (engines.length > 0 && !selectedVersion) {
+        // Always select first version when fork changes (reset stale selection)
+        if (engines.length > 0) {
           setSelectedVersion(engines[0].version)
+        } else {
+          setSelectedVersion('')
         }
       } catch (error) {
         console.error('Failed to fetch engines:', error)
