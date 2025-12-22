@@ -188,16 +188,22 @@ function getFallbackReleases(fork: DxvkFork): DxvkRelease[] {
   const repo = GITHUB_REPOS[fork]
   const data = fallbackData[fork]
 
-  return data.versions.map(version => ({
-    tag_name: `v${version}`,
-    name: `DXVK ${version}`,
-    published_at: new Date().toISOString(),
-    body: 'Fallback version (API rate limited)',
-    assets: [{
-      name: `${data.assetPrefix}-${version}.tar.gz`,
-      browser_download_url: `https://github.com/${repo}/releases/download/v${version}/${data.assetPrefix}-${version}.tar.gz`
-    }]
-  }))
+  return data.versions.map(version => {
+    // NVAPI uses 'v' prefix in asset filename, others don't
+    const assetVersion = fork === 'nvapi' ? `v${version}` : version
+    const filename = `${data.assetPrefix}-${assetVersion}.tar.gz`
+
+    return {
+      tag_name: `v${version}`,
+      name: `DXVK ${version}`,
+      published_at: new Date().toISOString(),
+      body: 'Fallback version (API rate limited)',
+      assets: [{
+        name: filename,
+        browser_download_url: `https://github.com/${repo}/releases/download/v${version}/${filename}`
+      }]
+    }
+  })
 }
 
 /**
