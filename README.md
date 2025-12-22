@@ -38,7 +38,7 @@
 - [Credits](#credits)
 
 ## Features
-- **Smart Game Discovery**: Automatically scans Steam libraries (VDF parsing) to find installed games.
+- **Smart Game Discovery**: Automatically scans Steam, GOG Galaxy, and Epic Games Store libraries to find installed games.
 - **Architecture Detection**: Analyzes PE headers to automatically determine if a game is 32-bit or 64-bit, ensuring the correct DLLs are installed.
 - **Engine Management**: Downloads and caches multiple versions of DXVK from GitHub/GitLab, supporting Official, GPL Async, and NVAPI forks.
 - **Safe Deployment**: Automatically backs up original system DLLs (`d3d9.dll`, `dxgi.dll`) before installation and offers one-click restoration.
@@ -85,6 +85,11 @@ If you prefer to compile it yourself:
    # executable will be in release/ folder
    ```
 
+4. Run Tests:
+   ```bash
+   npm run test
+   ```
+
 ## What's Inside?
 A high-level overview of the project structure:
 
@@ -109,7 +114,6 @@ dxvk-studio/
 ```
 
 ## What's Next?
-- **Store Integrations**: Adding support for GOG Galaxy and Epic Games Store libraries.
 - **Profiles**: Per-game configuration profiles that persist across updates.
 - **Cloud Sync**: Syncing configurations between devices (Pro feature).
 
