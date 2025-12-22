@@ -15,8 +15,7 @@
 
 ---
 
-<!-- TODO: Add demo GIF here -->
-<!-- ![Demo](docs/demo.gif) -->
+<img src="docs/screenshot.png" alt="DXVK Studio Screenshot" width="800">
 
 </div>
 
