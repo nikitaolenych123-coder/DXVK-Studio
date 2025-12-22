@@ -3,6 +3,16 @@
 </p>
 
 <p align="center">
+  <a href="https://github.com/Zendevve/dxvk-studio/releases/latest">
+    <img src="https://img.shields.io/github/v/release/Zendevve/dxvk-studio?style=for-the-badge&color=blue" alt="Release">
+  </a>
+  <a href="https://github.com/Zendevve/dxvk-studio/releases">
+    <img src="https://img.shields.io/github/downloads/Zendevve/dxvk-studio/total?style=for-the-badge&color=green" alt="Downloads">
+  </a>
+  <img src="https://img.shields.io/badge/platform-Windows-0078D6?style=for-the-badge&logo=windows" alt="Platform">
+</p>
+
+<p align="center">
   <a href="https://github.com/facebook/react">
     <img src="https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB" alt="React Badge">
   </a>
@@ -21,6 +31,7 @@
 </p>
 
 ---
+
 
 # DXVK Studio
 
