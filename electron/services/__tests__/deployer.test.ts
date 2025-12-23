@@ -164,11 +164,21 @@ describe('Deployer', () => {
 
     it('should format HUD options correctly', () => {
       const config: DxvkConfig = {
-        hud: ['fps', 'gpuload', 'memory']
+        hud: ['fps', 'gpuload', 'memory'],
+        hudScale: 1.5
       }
 
       const content = generateConfigFile(config)
-      expect(content).toContain('DXVK_HUD = fps,gpuload,memory')
+      expect(content).toContain('DXVK_HUD = fps,gpuload,memory,scale=1.5')
+    })
+
+    it('should format HUD scale only', () => {
+      const config: DxvkConfig = {
+        hudScale: 0.75
+      }
+
+      const content = generateConfigFile(config)
+      expect(content).toContain('DXVK_HUD = scale=0.75')
     })
 
     it('should handle custom vendor/device IDs', () => {

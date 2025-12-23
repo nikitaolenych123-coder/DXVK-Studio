@@ -2182,4 +2182,13 @@ function GameDetailView({
   )
 }
 
-export default App
+import { ErrorBoundary } from './components/ErrorBoundary'
+
+// Wrap App with Error Boundary
+export default function AppWrapper() {
+  return (
+    <ErrorBoundary>
+      <App />
+    </ErrorBoundary>
+  )
+}
