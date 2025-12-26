@@ -295,7 +295,7 @@ function App() {
             </div>
             <div>
               <h1 className="font-semibold text-studio-100">DXVK Studio</h1>
-              <p className="text-xs text-studio-500">v1.0.0</p>
+              <p className="text-xs text-studio-500">v{__APP_VERSION__}</p>
             </div>
           </div>
         </div>

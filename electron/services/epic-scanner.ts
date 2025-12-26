@@ -1,7 +1,7 @@
 import { readFileSync, readdirSync, existsSync } from 'fs'
 import { join } from 'path'
 import type { Game } from '../../src/shared/types'
-import { v4 as uuidv4 } from 'uuid'
+import { randomUUID } from 'crypto'
 
 export function findEpicGames(): Game[] {
   const games: Game[] = []
@@ -39,7 +39,7 @@ export function findEpicGames(): Game[] {
 
             if (existsSync(exePath)) {
               games.push({
-                id: `epic-${uuidv4()}`,
+                id: `epic-${randomUUID()}`,
                 name: DisplayName,
                 path: installDir,
                 executable: exePath,

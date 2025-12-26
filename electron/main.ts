@@ -116,7 +116,7 @@ function isValidGamePath(path: string): boolean {
   try {
     const normalized = resolve(path)
 
-    // Basic blocklist
+    // Basic blocklist - block system directories and their subdirectories
     const blockList = [
       'C:\\Windows',
       'C:\\Program Files',
@@ -126,7 +126,11 @@ function isValidGamePath(path: string): boolean {
       '/etc'
     ]
 
-    if (blockList.some(blocked => normalized.startsWith(blocked) && normalized.length === blocked.length)) {
+    // Check if path matches or is inside a blocked directory
+    if (blockList.some(blocked =>
+      normalized.toLowerCase().startsWith(blocked.toLowerCase()) &&
+      (normalized.length === blocked.length || normalized[blocked.length] === '\\' || normalized[blocked.length] === '/')
+    )) {
       return false
     }
 

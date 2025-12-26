@@ -4,8 +4,10 @@ import electron from 'vite-plugin-electron'
 import renderer from 'vite-plugin-electron-renderer'
 import { resolve, dirname } from 'path'
 import { fileURLToPath } from 'url'
+import { readFileSync } from 'fs'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
+const pkg = JSON.parse(readFileSync(resolve(__dirname, 'package.json'), 'utf-8'))
 
 export default defineConfig({
   plugins: [
@@ -67,5 +69,8 @@ export default defineConfig({
         main: resolve(__dirname, 'index.html')
       }
     }
+  },
+  define: {
+    __APP_VERSION__: JSON.stringify(pkg.version)
   }
 })
