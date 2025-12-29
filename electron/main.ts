@@ -25,11 +25,14 @@ import {
   writeConfig,
   readConfig,
   readManifest,
-  detectManualInstallation
+  detectManualInstallation,
+  readVkd3dConfig,
+  writeVkd3dConfig,
+  hasVkd3dLauncher
 } from './services/deployer'
 import { detectAntiCheat, getAntiCheatSummary } from './services/anti-cheat'
 import { getAllProfiles, saveProfile, deleteProfile } from './services/profile-manager'
-import type { Game, DxvkFork, DxvkConfig, DxvkProfile, DxvkStatus } from '../src/shared/types'
+import type { Game, DxvkFork, DxvkConfig, DxvkProfile, DxvkStatus, Vkd3dConfig } from '../src/shared/types'
 
 // ============================================
 // Build Paths
@@ -504,6 +507,30 @@ ipcMain.handle('config:save', async (_, gamePath: string, config: DxvkConfig) =>
 ipcMain.handle('config:read', async (_, gamePath: string) => {
   if (!isValidGamePath(gamePath)) return null
   return readConfig(gamePath)
+})
+
+// ============================================
+// IPC Handlers - VKD3D Configuration
+// ============================================
+
+ipcMain.handle('vkd3d:readConfig', async (_, gamePath: string) => {
+  if (!isValidGamePath(gamePath)) return null
+  return readVkd3dConfig(gamePath)
+})
+
+ipcMain.handle('vkd3d:saveConfig', async (_, gamePath: string, executable: string, config: Vkd3dConfig) => {
+  if (!isValidGamePath(gamePath)) return { success: false, error: 'Invalid game path' }
+  try {
+    writeVkd3dConfig(gamePath, config, executable)
+    return { success: true }
+  } catch (error) {
+    return { success: false, error: (error as Error).message }
+  }
+})
+
+ipcMain.handle('vkd3d:hasLauncher', async (_, gamePath: string) => {
+  if (!isValidGamePath(gamePath)) return false
+  return hasVkd3dLauncher(gamePath)
 })
 
 // ============================================

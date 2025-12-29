@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron'
-import type { DxvkFork, DxvkConfig, Game, DxvkEngine, PEAnalysisResult, DxvkProfile } from '../src/shared/types'
+import type { DxvkFork, DxvkConfig, Vkd3dConfig, Game, DxvkEngine, PEAnalysisResult, DxvkProfile } from '../src/shared/types'
 
 // Type for download progress events
 export interface DownloadProgress {
@@ -119,6 +119,15 @@ contextBridge.exposeInMainWorld('electronAPI', {
   saveConfig: (gamePath: string, config: DxvkConfig) =>
     ipcRenderer.invoke('config:save', gamePath, config) as Promise<{ success: boolean; error?: string }>,
 
+  // ============================================
+  // VKD3D Configuration
+  // ============================================
+  readVkd3dConfig: (gamePath: string) =>
+    ipcRenderer.invoke('vkd3d:readConfig', gamePath) as Promise<Vkd3dConfig | null>,
+  saveVkd3dConfig: (gamePath: string, executable: string, config: Vkd3dConfig) =>
+    ipcRenderer.invoke('vkd3d:saveConfig', gamePath, executable, config) as Promise<{ success: boolean; error?: string }>,
+  hasVkd3dLauncher: (gamePath: string) =>
+    ipcRenderer.invoke('vkd3d:hasLauncher', gamePath) as Promise<boolean>,
 
   // ============================================
   // Profiles
@@ -208,6 +217,11 @@ declare global {
       // Config
       readConfig: (gamePath: string) => Promise<DxvkConfig | null>
       saveConfig: (gamePath: string, config: DxvkConfig) => Promise<{ success: boolean; error?: string }>
+
+      // VKD3D Config
+      readVkd3dConfig: (gamePath: string) => Promise<Vkd3dConfig | null>
+      saveVkd3dConfig: (gamePath: string, executable: string, config: Vkd3dConfig) => Promise<{ success: boolean; error?: string }>
+      hasVkd3dLauncher: (gamePath: string) => Promise<boolean>
 
       // Profiles
       getAllProfiles: () => Promise<DxvkProfile[]>

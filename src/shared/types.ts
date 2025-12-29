@@ -93,6 +93,32 @@ export const DEFAULT_DXVK_CONFIG: DxvkConfig = {
   logLevel: 'warn'
 }
 
+// ============================================
+// VKD3D Configuration Types
+// ============================================
+
+export interface Vkd3dConfig {
+  // VKD3D_CONFIG flags
+  enableDxr?: boolean         // dxr - Force enable DXR
+  disableDxr?: boolean        // nodxr - Disable DXR
+  forceStaticCbv?: boolean    // force_static_cbv - NVIDIA speed hack
+
+  // Frame limiting
+  maxFrameRate?: number       // VKD3D_FRAME_RATE
+
+  // Swapchain
+  swapchainLatencyFrames?: number  // VKD3D_SWAPCHAIN_LATENCY_FRAMES
+
+  // Debug/Logging
+  debugLevel?: 'none' | 'err' | 'warn' | 'fixme' | 'info' | 'trace'  // VKD3D_DEBUG
+  shaderDebugLevel?: 'none' | 'err' | 'warn' | 'fixme' | 'info' | 'trace'  // VKD3D_SHADER_DEBUG
+  logFile?: string            // VKD3D_LOG_FILE
+}
+
+export const DEFAULT_VKD3D_CONFIG: Vkd3dConfig = {
+  debugLevel: 'none'
+}
+
 
 export interface DxvkProfile extends DxvkConfig {
   id: string
