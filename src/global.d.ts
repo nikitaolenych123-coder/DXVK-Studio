@@ -8,6 +8,7 @@ import type {
   DxvkFork,
   DxvkEngine,
   DxvkConfig,
+  Vkd3dConfig,
   PEAnalysisResult,
   DxvkProfile
 } from './shared/types'
@@ -77,6 +78,11 @@ declare global {
       // Config
       readConfig: (gamePath: string) => Promise<DxvkConfig | null>
       saveConfig: (gamePath: string, config: DxvkConfig) => Promise<{ success: boolean; error?: string }>
+
+      // VKD3D Config
+      readVkd3dConfig: (gamePath: string) => Promise<Vkd3dConfig | null>
+      saveVkd3dConfig: (gamePath: string, executable: string, config: Vkd3dConfig) => Promise<{ success: boolean; error?: string }>
+      hasVkd3dLauncher: (gamePath: string) => Promise<boolean>
 
       // Profiles
       getAllProfiles: () => Promise<DxvkProfile[]>
