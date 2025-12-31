@@ -132,10 +132,10 @@ function App() {
   }, [])
 
   // Scan Steam library
-  const handleScan = useCallback(async () => {
+  const handleScan = useCallback(async (): Promise<number> => {
     if (!isElectron) {
       showNotification('error', 'Not running in Electron')
-      return
+      return 0
     }
 
     setIsScanning(true)
@@ -175,10 +175,12 @@ function App() {
       })
       showNotification('success', `Found ${scannedGames.length} games`)
       addLogEntry('info', `Game scan completed`, `Found ${scannedGames.length} games from Steam, GOG, and Epic`)
+      return scannedGames.length
     } catch (error) {
       showNotification('error', 'Failed to scan Steam library')
       addLogEntry('error', 'Game scan failed', String(error))
       console.error(error)
+      return 0
     } finally {
       setIsScanning(false)
     }

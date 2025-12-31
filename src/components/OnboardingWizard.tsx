@@ -3,7 +3,7 @@ import { Gamepad2, Search, ChevronRight, Check } from 'lucide-react'
 
 interface OnboardingWizardProps {
   onComplete: () => void
-  onScanGames: () => Promise<void>
+  onScanGames: () => Promise<number> // Returns count of games found
 }
 
 const steps = [
@@ -20,12 +20,11 @@ export function OnboardingWizard({ onComplete, onScanGames }: OnboardingWizardPr
   const handleScan = async () => {
     setIsScanning(true)
     try {
-      await onScanGames()
-      const saved = localStorage.getItem('dxvk-studio-games')
-      const games = saved ? JSON.parse(saved) : []
-      setGamesFound(games.length)
+      const count = await onScanGames()
+      setGamesFound(count)
     } catch (e) {
       console.error('Scan failed:', e)
+      setGamesFound(0)
     } finally {
       setIsScanning(false)
     }
@@ -47,11 +46,11 @@ export function OnboardingWizard({ onComplete, onScanGames }: OnboardingWizardPr
       <div className="w-full max-w-lg mx-4">
         {/* Card */}
         <div className="glass-card overflow-hidden border border-accent-vulkan/20">
-          {/* Progress indicator */}
+          {/* Progress indicator - properly centered */}
           <div className="px-8 pt-6 pb-4 bg-gradient-to-b from-accent-vulkan/5 to-transparent border-b border-white/5">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-center gap-4">
               {steps.map((step, i) => (
-                <div key={step.id} className="flex items-center flex-1">
+                <div key={step.id} className="flex items-center">
                   <div className="flex flex-col items-center">
                     <div
                       className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-all duration-300 ${i < currentStep
@@ -70,7 +69,7 @@ export function OnboardingWizard({ onComplete, onScanGames }: OnboardingWizardPr
                   </div>
                   {i < steps.length - 1 && (
                     <div
-                      className={`flex-1 h-0.5 mx-3 mt-[-18px] transition-colors duration-300 ${i < currentStep ? 'bg-accent-vulkan' : 'bg-studio-800'
+                      className={`w-16 h-0.5 mx-3 transition-colors duration-300 ${i < currentStep ? 'bg-accent-vulkan' : 'bg-studio-800'
                         }`}
                     />
                   )}
@@ -119,9 +118,14 @@ export function OnboardingWizard({ onComplete, onScanGames }: OnboardingWizardPr
 
                 {gamesFound !== null ? (
                   <div className="space-y-4">
-                    <div className="p-4 rounded-lg bg-accent-success/10 border border-accent-success/30">
-                      <p className="text-accent-success font-medium">
-                        Found {gamesFound} game{gamesFound !== 1 ? 's' : ''}!
+                    <div className={`p-4 rounded-lg ${gamesFound > 0
+                        ? 'bg-accent-success/10 border border-accent-success/30'
+                        : 'bg-studio-800/50 border border-studio-700'
+                      }`}>
+                      <p className={gamesFound > 0 ? 'text-accent-success font-medium' : 'text-studio-300'}>
+                        {gamesFound > 0
+                          ? `Found ${gamesFound} game${gamesFound !== 1 ? 's' : ''}!`
+                          : 'No games found. You can add games manually later.'}
                       </p>
                     </div>
                     <button onClick={handleNext} className="btn-primary w-full py-3 flex items-center justify-center gap-2">
