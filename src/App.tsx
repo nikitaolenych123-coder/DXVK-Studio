@@ -1981,6 +1981,21 @@ function EngineManagementCard({
         </div>
       )}
 
+      {/* Compatibility Warning */}
+      {!isActive && (
+        <div className="mb-4 p-3 rounded-lg bg-studio-800/50 border border-studio-700 flex items-start gap-3">
+          <AlertCircle className="w-4 h-4 text-studio-400 mt-0.5 shrink-0" />
+          <div className="text-xs text-studio-400">
+            <p className="font-medium text-studio-300">Compatibility Notice</p>
+            <p className="mt-1">
+              DXVK/VKD3D may cause white screens or crashes in some games. If issues occur, simply click
+              <span className="font-medium text-white mx-1">Uninstall</span>
+              to restore original files.
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Actions */}
       <div className="flex gap-3">
         {isActive ? (
