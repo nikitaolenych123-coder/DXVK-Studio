@@ -8,7 +8,8 @@ import { mkdirSync, writeFileSync, existsSync, rmSync } from 'fs'
 import { join } from 'path'
 import { detectAntiCheat, hasHighRiskAntiCheat, getAntiCheatSummary } from '../anti-cheat'
 
-const TEST_DIR = join(__dirname, 'fixtures', 'game')
+const FIXTURES_DIR = join(__dirname, 'fixtures', 'anti-cheat')
+const TEST_DIR = join(FIXTURES_DIR, 'game')
 
 describe('Anti-Cheat Detection', () => {
   beforeAll(() => {
@@ -17,8 +18,8 @@ describe('Anti-Cheat Detection', () => {
   })
 
   afterAll(() => {
-    if (existsSync(join(__dirname, 'fixtures'))) {
-      rmSync(join(__dirname, 'fixtures'), { recursive: true, force: true })
+    if (existsSync(FIXTURES_DIR)) {
+      rmSync(FIXTURES_DIR, { recursive: true, force: true })
     }
   })
 
@@ -48,7 +49,7 @@ describe('Anti-Cheat Detection', () => {
     })
 
     it('should return empty for clean directories', () => {
-      const cleanDir = join(__dirname, 'fixtures', 'clean-game')
+      const cleanDir = join(FIXTURES_DIR, 'clean-game')
       mkdirSync(cleanDir, { recursive: true })
       writeFileSync(join(cleanDir, 'game.exe'), 'dummy')
 
@@ -64,7 +65,7 @@ describe('Anti-Cheat Detection', () => {
 
   describe('hasHighRiskAntiCheat', () => {
     it('should return false for clean game', () => {
-      const cleanDir = join(__dirname, 'fixtures', 'clean-game')
+      const cleanDir = join(FIXTURES_DIR, 'clean-game')
       if (!existsSync(cleanDir)) {
         mkdirSync(cleanDir, { recursive: true })
       }
@@ -75,7 +76,7 @@ describe('Anti-Cheat Detection', () => {
 
   describe('getAntiCheatSummary', () => {
     it('should return structured summary', () => {
-      const cleanDir = join(__dirname, 'fixtures', 'clean-game')
+      const cleanDir = join(FIXTURES_DIR, 'clean-game')
       const summary = getAntiCheatSummary(cleanDir)
 
       expect(summary).toHaveProperty('hasAntiCheat')
@@ -85,7 +86,7 @@ describe('Anti-Cheat Detection', () => {
     })
 
     it('should report no anti-cheat for clean directory', () => {
-      const cleanDir = join(__dirname, 'fixtures', 'clean-game')
+      const cleanDir = join(FIXTURES_DIR, 'clean-game')
       const summary = getAntiCheatSummary(cleanDir)
 
       expect(summary.hasAntiCheat).toBe(false)

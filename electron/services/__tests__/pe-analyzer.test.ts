@@ -8,7 +8,7 @@ import { writeFileSync, unlinkSync, mkdirSync, existsSync, rmSync } from 'fs'
 import { join } from 'path'
 import { analyzeExecutable, findGameExecutables } from '../pe-analyzer'
 
-const TEST_DIR = join(__dirname, 'fixtures')
+const TEST_DIR = join(__dirname, 'fixtures', 'pe-analyzer')
 
 // Minimal PE headers for testing
 // 32-bit PE header

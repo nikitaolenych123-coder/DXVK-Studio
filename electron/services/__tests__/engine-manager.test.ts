@@ -7,10 +7,14 @@ import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest'
 import { mkdirSync, writeFileSync, existsSync, rmSync } from 'fs'
 import { join } from 'path'
 
+const FIXTURES_DIR = join(__dirname, 'fixtures', 'engine-manager')
+
 // Mock Electron app before importing engine-manager
 vi.mock('electron', () => ({
   app: {
-    getPath: vi.fn().mockReturnValue(join(__dirname, 'fixtures', 'appdata'))
+    getPath: vi.fn().mockReturnValue(
+      join(__dirname, 'fixtures', 'engine-manager', 'appdata')
+    )
   }
 }))
 
@@ -22,8 +26,6 @@ import {
   releaseToEngine
 } from '../engine-manager'
 import type { DxvkRelease, DxvkFork } from '../../shared/types'
-
-const FIXTURES_DIR = join(__dirname, 'fixtures')
 const ENGINES_DIR = join(FIXTURES_DIR, 'appdata', 'engines')
 
 describe('Engine Manager', () => {

@@ -15,7 +15,7 @@ import {
 } from '../deployer'
 import type { DeploymentManifest, DxvkConfig } from '../../shared/types'
 
-const FIXTURES_DIR = join(__dirname, 'fixtures')
+const FIXTURES_DIR = join(__dirname, 'fixtures', 'deployer')
 const GAME_DIR = join(FIXTURES_DIR, 'test-game')
 
 describe('Deployer', () => {

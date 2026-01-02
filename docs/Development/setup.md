@@ -27,12 +27,25 @@ npm run dev
 
 ## Available Commands
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Start Vite dev server with Electron |
-| `npm run build` | Production build with electron-builder |
-| `npm run preview` | Preview production build |
-| `npm run lint` | Run ESLint |
+| Command           | Description                            |
+| ----------------- | -------------------------------------- |
+| `npm run dev`     | Start Vite dev server with Electron    |
+| `npm run build`   | Production build with electron-builder |
+| `npm run preview` | Preview production build               |
+| `npm run lint`    | Run ESLint                             |
+
+---
+
+## Windows Build (GitHub Actions)
+
+DXVK Studio is Windows-first; the Windows installer/portable builds are produced on GitHub Actions using `windows-latest`.
+
+1. Open the repo on GitHub → **Actions** tab
+2. Select **Windows Build**
+3. Click **Run workflow**
+4. Open the completed run → download the artifact **dxvk-studio-windows-<sha>**
+
+The artifact contains the Windows `.exe` outputs from the `release/` folder.
 
 ---
 
@@ -74,19 +87,21 @@ dxvk-studio/
 
 ## Environment Variables
 
-| Variable | Purpose | Default |
-|----------|---------|---------|
-| `VITE_DEV_SERVER_URL` | Vite dev server (set automatically) | - |
+| Variable              | Purpose                             | Default |
+| --------------------- | ----------------------------------- | ------- |
+| `VITE_DEV_SERVER_URL` | Vite dev server (set automatically) | -       |
 
 ---
 
 ## Debugging
 
 ### Main Process
+
 - DevTools opens automatically in dev mode
 - Console logs appear in terminal
 
 ### Renderer Process
+
 - Use Chrome DevTools (Ctrl+Shift+I)
 - React DevTools available if installed
 
@@ -95,9 +110,11 @@ dxvk-studio/
 ## Common Issues
 
 ### Steam not detected
+
 - Ensure Steam is installed in a standard location
 - Check `C:\Program Files (x86)\Steam`
 
 ### Build fails
+
 - Delete `node_modules` and `npm install`
 - Clear `dist-electron` folder
