@@ -1,3 +1,4 @@
+export * from './BrandToast'
 export * from './CommandPalette'
 export * from './ConfigEditorModal'
 export * from './ContextMenu'

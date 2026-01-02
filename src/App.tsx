@@ -23,6 +23,7 @@ import {
 import type { Game, DxvkFork } from './shared/types'
 
 import {
+  BrandToast,
   ContextMenu,
   ConfigEditorModal,
   Vkd3dConfigModal,
@@ -516,6 +517,9 @@ function App() {
         onScanGames={handleScan}
         onAddGame={handleAddGame}
       />
+
+      {/* Brand Toast - Bottom Right */}
+      <BrandToast />
     </div>
   )
 }
