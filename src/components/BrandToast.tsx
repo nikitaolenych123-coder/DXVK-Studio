@@ -1,4 +1,3 @@
-```javascript
 import { useEffect, useState } from 'react'
 import { ExternalLink, Sparkles } from 'lucide-react'
 
@@ -33,11 +32,10 @@ export function BrandToast() {
 
   return (
     <div
-      className={`fixed bottom - 8 right - 8 z - 40 transition - all duration - 700 ease - out ${
-  isVisible
-    ? 'opacity-100 translate-y-0'
-    : 'opacity-0 translate-y-4'
-} `}
+      className={`fixed bottom-8 right-8 z-40 transition-all duration-700 ease-out ${isVisible
+          ? 'opacity-100 translate-y-0'
+          : 'opacity-0 translate-y-4'
+        }`}
     >
       <button
         onClick={() => window.open('https://guinto2.gumroad.com/l/dxvkstudio', '_blank')}
